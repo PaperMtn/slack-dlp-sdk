@@ -1,15 +1,49 @@
 # Slack DLP SDK for Python
 
-![Python 2.7 and 3 compatible](https://img.shields.io/pypi/pyversions/slack-dlp-sdk)
+![Python versions](https://img.shields.io/pypi/pyversions/slack-dlp-sdk)
 ![PyPI version](https://img.shields.io/pypi/v/slack-dlp-sdk.svg)
 ![License: MIT](https://img.shields.io/pypi/l/slack-dlp-sdk.svg)
 
 > [!NOTE]
-> This SDK is not affiliated with or endorsed by Slack Technologies, Inc.
+> This SDK is not affiliated with or endorsed by Slack Technologies, Inc. It makes use of undocumented Slack API endpoints and may break at any time. Use at your own risk.
 
-A Python SDK for interacting with Slack's Data Loss Prevention (DLP) features. This SDK allows retrieving, managing, and monitoring DLP policies and alerts for a Slack Enterprise.
+A Python SDK for interacting with Slack's Data Loss Prevention (DLP) features.
 
-It also provides a CLI for interacting with Slack DLP features directly from the command line.
+The SDK allows you to:
+
+- Retrieve and manage DLP rules
+- Retrieve, archive, and unarchive DLP alerts
+- Automate DLP workflows via a Python API
+- Interact with DLP features via a built-in CLI
+
+## Quick Start
+
+```python
+from slack_dlp_sdk import (
+    SlackDLPClient,
+    SystemDetector,
+    RuleAction,
+    ChannelShareTargetType,
+    ChannelType,
+)
+
+client = SlackDLPClient(
+    d_cookie="your_d_cookie",
+    enterprise_domain="your-enterprise.slack.com",
+)
+
+# List existing DLP rules
+rules = client.get_dlp_rules()
+
+# Create a new DLP rule
+client.create_dlp_rule(
+    name="Block UK NINOs",
+    detectors=[SystemDetector.NATIONAL_ID_UNITED_KINGDOM],
+    action=RuleAction.ALERT_ONLY,
+    channel_share_target=ChannelShareTargetType.ALL,
+    channel_type=[ChannelType.PUBLIC],
+)
+```
 
 ## Prerequisites
 1. Slack Enterprise Grid plan.
@@ -38,6 +72,28 @@ client = SlackDLPClient(
    timeout=60
 )
 ```
+
+### Models and Enums
+
+The SDK uses Python enums to represent valid values for rule actions, detectors, and channel types.
+These are re-exported at the top level for easy discovery and IDE autocomplete.
+
+```python
+from slack_dlp_sdk import RuleAction, SystemDetector
+
+list(RuleAction)
+# [RuleAction.ALERT_ONLY, RuleAction.USER_WARNING, RuleAction.TOMBSTONE]
+
+[x.value for x in SystemDetector]
+# ['ALL_CREDIT_CARDS', 'NATIONAL_ID_UNITED_KINGDOM', ...]
+```
+
+Enums used by the SDK:
+
+- `RuleAction`
+- `SystemDetector`
+- `ChannelType`
+- `ChannelShareTargetType`
 
 ### Alert Management
 
@@ -75,22 +131,12 @@ alerts = client.get_dlp_alerts(
 **Get a specific DLP Alert by ID**
 
 ```python
-from slack_dlp_sdk import SlackDLPClient
-
-# Initialize the Slack DLP Client
-client = SlackDLPClient(...)
-
 alert = client.get_dlp_alert_details(alert_id="alert123def")
 ```
 
 **Archive a DLP Alert**
 
 ```python
-from slack_dlp_sdk import SlackDLPClient
-
-# Initialize the Slack DLP Client
-client = SlackDLPClient(...)
-
 # Archive a DLP Alert
 client.archive_dlp_alert(alert_ids="alert123def")
 
@@ -104,11 +150,6 @@ client.archive_dlp_alert(alert_ids="alert123def, alert456ghi")
 **Unarchive a DLP Alert**
 
 ```python
-from slack_dlp_sdk import SlackDLPClient
-
-# Initialize the Slack DLP Client
-client = SlackDLPClient(...)
-
 # Unarchive a DLP Alert
 client.unarchive_dlp_alert(alert_id="alert123def")
 
@@ -124,22 +165,12 @@ client.unarchive_dlp_alert(alert_ids="alert123def, alert456ghi")
 **Get all DLP Rules** 
 
 ```python
-from slack_dlp_sdk import SlackDLPClient
-
-# Initialize the Slack DLP Client
-client = SlackDLPClient(...)
-
 rules = client.get_dlp_rules()
 ```
 
 **Get a specific DLP Rule by ID**
 
 ```python
-from slack_dlp_sdk import SlackDLPClient
-
-# Initialize the Slack DLP Client
-client = SlackDLPClient(...)
-
 rule = client.get_dlp_rule(rule_id="abc123def")
 ```
 
@@ -207,11 +238,6 @@ updated_rule_with_regex = client.update_dlp_rule(
 **Deactivate a DLP Rule**
 
 ```python
-from slack_dlp_sdk import SlackDLPClient
-
-# Initialize the Slack DLP Client
-client = SlackDLPClient(...)
-
 # Deactivate a DLP Rule
 client.deactivate_dlp_rule(rule_id="abc123def456")
 ```
@@ -219,10 +245,6 @@ client.deactivate_dlp_rule(rule_id="abc123def456")
 **Reactivate a DLP Rule**
 
 ```python
-from slack_dlp_sdk import SlackDLPClient
-# Initialize the Slack DLP Client
-client = SlackDLPClient(...)
-
 # Reactivate a DLP Rule
 client.reactivate_dlp_rule(rule_id="abc123def456")
 ```
@@ -254,4 +276,27 @@ options:
                         Slack 'd' cookie value (prefer env var D_COOKIE).
   --enterprise-domain ENTERPRISE_DOMAIN
                         Slack enterprise domain (prefer env var ENTERPRISE_DOMAIN).
+```
+
+### CLI examples
+
+List rules:
+```commandline
+slack-dlp rule list
+```
+
+```commandline
+Create a rule:
+
+slack-dlp rule create \
+  --name "Block cards" \
+  --detector ALL_CREDIT_CARDS \
+  --action ALERT_ONLY \
+  --channel-share-target EXTERNAL_ONLY \
+  --channel-type PUBLIC
+```
+
+List alerts from the last hour:
+```commandline
+slack-dlp alert list --earliest $(($(date +%s) - 3600))
 ```

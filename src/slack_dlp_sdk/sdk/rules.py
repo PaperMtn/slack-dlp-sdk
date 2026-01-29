@@ -24,6 +24,7 @@ else:
     Self = object
 
 
+# pylint: disable=line-too-long
 class RulesMixin:
     """Mixin providing DLP rule management functionality."""
 
