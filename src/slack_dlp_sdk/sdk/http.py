@@ -128,8 +128,8 @@ class SlackHTTPMixin:
         if not payload.get("ok", False):
             raise SlackAPIError(
                 error=payload.get("error", "unknown_error"),
-                messages=payload.get("messages", []),
-                warnings=payload.get("warnings", []),
+                messages=payload.get("response_metadata", {}).get("messages", []),
+                warnings=payload.get("response_metadata", {}).get("warnings", []),
                 status_code=response.status_code,
                 endpoint=endpoint,
             )
