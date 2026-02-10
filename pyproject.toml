@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "slack-dlp-sdk"
-version = "0.21.0"
+version = "0.2.0"
 description = "A Python SDK for interacting with Slack Data Loss Prevention (DLP)"
 authors = ["PaperMtn <me@papermtn.co.uk>"]
 readme = "README.md"
