@@ -6,6 +6,7 @@ import argparse
 import json
 import os
 from typing import Any, Optional
+from importlib.metadata import PackageNotFoundError, version
 
 from slack_dlp_sdk.client import SlackDLPClient
 from slack_dlp_sdk.sdk.models import (
@@ -16,6 +17,13 @@ from slack_dlp_sdk.sdk.models import (
 )
 from slack_dlp_sdk.cli.commands.rules import setup_rules_command
 from slack_dlp_sdk.cli.commands.alerts import setup_alerts_command
+
+
+def _get_cli_version() -> str:
+    try:
+        return version("slack-dlp-sdk")
+    except PackageNotFoundError:
+        return "0.0.0"
 
 
 def _add_global_args(parser: argparse.ArgumentParser) -> None:
@@ -30,6 +38,11 @@ def _add_global_args(parser: argparse.ArgumentParser) -> None:
         type=str,
         default=os.getenv("ENTERPRISE_DOMAIN", ""),
         help="Slack enterprise domain (prefer env var ENTERPRISE_DOMAIN).",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {_get_cli_version()}",
     )
 
 
