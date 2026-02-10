@@ -159,7 +159,7 @@ class RulesMixin:
                 Examples:
                     - [SystemDetector.ALL_CREDIT_CARDS]
                     - [SystemDetector.NATIONAL_ID_US_SSN]
-                    - [{"type": "REGEX", "pattern": r"\\b\\d{3}-\\d{2}-\\d{4}\\b"}]
+                    - [{"type": "REGEX", "value": r"\\b\\d{3}-\\d{2}-\\d{4}\\b"}]
             action:
                 New action to take when a violation is detected.
 
@@ -272,7 +272,7 @@ class RulesMixin:
                 Examples:
                     - [SystemDetector.ALL_CREDIT_CARDS]
                     - [SystemDetector.NATIONAL_ID_US_SSN]
-                    - [{"type": "REGEX", "pattern": r"\\b\\d{3}-\\d{2}-\\d{4}\\b"}]
+                    - [{"type": "REGEX", "value": r"\\b\\d{3}-\\d{2}-\\d{4}\\b"}]
             action:
                 Action to take when a violation is detected.
 
