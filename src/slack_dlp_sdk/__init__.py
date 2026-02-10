@@ -1,4 +1,5 @@
 """Slack Data Loss Prevention (DLP) SDK"""
+
 from __future__ import annotations
 
 from importlib.metadata import PackageNotFoundError, version
